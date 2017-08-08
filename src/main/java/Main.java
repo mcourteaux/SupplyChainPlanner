@@ -30,8 +30,7 @@ public class Main {
                 db_user, db_pass)) {
             System.out.println("Connection made!");
 
-            //drop_dummies(connection);
-            //generate_dummies(connection);
+            //regenerate_dummies(connection);
             print_graph_stats(connection);
 
             GraphInstantiator gi = new GraphInstantiator();
@@ -112,6 +111,11 @@ public class Main {
         System.out.printf("Offers        : %6d%n", num_offers);
         System.out.printf("Agents        : %6d%n", num_agents);
 
+    }
+
+    private static void regenerate_dummies(Connection conn) throws SQLException {
+        drop_dummies(conn);
+        generate_dummies(conn);
     }
 
     private static void drop_dummies(Connection conn) throws SQLException {
