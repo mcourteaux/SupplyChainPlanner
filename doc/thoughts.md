@@ -85,14 +85,26 @@ such that they get back home.
 
 # Implementation
 
+On GitHub here:
+[mcourteaux/SupplyChainPlanner](https://github.com/mcourteaux/SupplyChainPlanner)
+
+
 ## kShortestPaths
-A CostModel defines the characteristics of the consignment: weight, volume,
-etc... This results in a formula combining the cost parameters for an offer,
-used in the database query to produce a "cost" column. This result set is
+A `ConsigmentDetails` defines the characteristics of the consignment: weight,
+volume, etc... This results in a formula combining the cost parameters for an
+offer, used in the database query to produce a "cost" column. This result set is
 converted to an in-JVM-memory graph implemented on a modified version of:
 [yan-qi/k-shortest-paths-java-version](https://github.com/yan-qi/k-shortest-paths-java-version)
 
 I put it on GitHub here:
 [mcourteaux/k-shortest-paths-java-version](https://github.com/mcourteaux/k-shortest-paths-java-version)
+
+I implemented query generation to represent filtering for example using:
+
+ - weight
+ - volume
+ - number of pallets
+ - allowing ferry
+ - disallowed agents
 
 

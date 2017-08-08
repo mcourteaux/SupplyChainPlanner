@@ -1,22 +1,16 @@
+package com.martijncourteaux.supplychainplanner;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import ddg.LineGenerator;
-import ddg.LocationGenerator;
-import ddg.OffersGenerator;
-import edu.asu.emit.algorithm.graph.Graph;
-import edu.asu.emit.algorithm.graph.Path;
-import edu.asu.emit.algorithm.graph.abstraction.BaseVertex;
-import edu.asu.emit.algorithm.graph.shortestpaths.YenTopKShortestPathsAlg;
+import com.martijncourteaux.supplychainplanner.dummydatagenerator.LineGenerator;
+import com.martijncourteaux.supplychainplanner.dummydatagenerator.LocationGenerator;
+import com.martijncourteaux.supplychainplanner.dummydatagenerator.OffersGenerator;
 import java.sql.ResultSet;
-import sp.AttributedGraph;
-import sp.ConsignmentDetails;
-import sp.GraphInstantiator;
-
-import sp.VertexAttribute;
+import com.martijncourteaux.supplychainplanner.shortestpaths.ShortestPathsSolver;
+import com.martijncourteaux.supplychainplanner.shortestpaths.TransportPath;
 
 public class Main {
 
@@ -32,19 +26,23 @@ public class Main {
             //regenerate_dummies(connection);
             print_graph_stats(connection);
 
-            GraphInstantiator gi = new GraphInstantiator();
+            /* ==== Create a consignment ==== */
             ConsignmentDetails cm = new ConsignmentDetails();
-            cm.basic_cost_weight = 1.0;
-            cm.cost_per_kg_weight = 800.0;
-            cm.cost_per_m3_weight = 20.0;
-            cm.cost_per_pallet_weight = 5.0;
-            cm.duration_hours_weight = 3.0;
+            cm.location_from = 1;
+            cm.location_to = 55;
 
             /* Specify the size of the consignment, such that the offers can be
              * filtered. */
             cm.pallets = 5;
             cm.volume_m3 = 20;
             cm.weight_kg = 800;
+
+            /* Cost weights */
+            cm.basic_cost_weight = 1.0;
+            cm.cost_per_kg_weight = cm.weight_kg;
+            cm.cost_per_m3_weight = cm.volume_m3;
+            cm.cost_per_pallet_weight = cm.pallets;
+            cm.duration_hours_weight = 3.0;
 
             /* Some parameters for extra filtering. */
             cm.allow_ferry = true;
@@ -53,60 +51,27 @@ public class Main {
              * work with again. */
             cm.disallowed_agents.add(7);
 
+            /* ==== Solve it ==== */
+            ShortestPathsSolver sps = new ShortestPathsSolver(cm);
             System.out.println("Loading graph from database...");
-            AttributedGraph<VertexAttribute> g = gi.instantiateGraph(connection, cm);
-            Graph gr = g.getGraph();
-
-            BaseVertex vFrom = g.getVertexForLocation(1);
-            BaseVertex vTo = g.getVertexForLocation(55);
-
+            sps.buildGraph(connection);
             System.out.println("Searching shortest paths...");
-            YenTopKShortestPathsAlg alg = new YenTopKShortestPathsAlg(gr, vFrom, vTo);
+            int found = sps.searchPaths(5);
 
-            int count = 0;
-            while (alg.hasNext() && count++ < 5) {
-                Path p = alg.next();
-                System.out.printf("Path %03d: %s%n", count, path_to_string(p, g));
+            System.out.println("Found " + found + " paths.");
+
+            for (TransportPath tp : sps.getTopKShortestPaths()) {
+                System.out.println(tp);
+                System.out.println();
             }
         }
-    }
-
-    /**
-     * Creates a nicely formatted multiline string for a given Path.
-     * @param p the path to represent.
-     * @param gr the attributed graph which contains the Path.
-     * @return A nice multiline string.
-     */
-    public static String path_to_string(Path p, AttributedGraph<VertexAttribute> gr) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Path (cost=");
-        sb.append(p.getWeight());
-        sb.append("; hops=");
-        sb.append((p.getVertexList().size() - 1) / 2);
-        sb.append(")\n");
-        for (int i = 0; i < p.getVertexList().size(); ++i) {
-            BaseVertex vert = p.getVertexList().get(i);
-            VertexAttribute att = gr.getAttribute(vert.getId());
-            if (i % 2 == 0) {
-                sb.append(att.location_code);
-                sb.append("\n");
-            } else {
-                sb.append(" --- ");
-                sb.append(att.line_modality);
-                sb.append("   ", 0, 6 - att.line_modality.length());
-                sb.append(" { ");
-                sb.append(String.format("%8s: agent=%2d, cost=%5.2f",
-                        att.line_code, att.agent_id, att.cost));
-                sb.append("  }---> ");
-            }
-        }
-        return sb.toString();
     }
 
     /**
      * Prints some stats of the graph size.
+     *
      * @param conn a valid SQL connection.
-     * @throws SQLException 
+     * @throws SQLException
      */
     public static void print_graph_stats(Connection conn) throws SQLException {
         long num_loc;

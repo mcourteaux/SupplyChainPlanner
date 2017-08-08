@@ -1,4 +1,4 @@
-package sp;
+package com.martijncourteaux.supplychainplanner.shortestpaths;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

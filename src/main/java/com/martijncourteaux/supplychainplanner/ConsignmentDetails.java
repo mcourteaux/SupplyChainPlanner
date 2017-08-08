@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sp;
+package com.martijncourteaux.supplychainplanner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,11 @@ import java.util.List;
  * @author martijn
  */
 public class ConsignmentDetails {
+
+    /* Traval information */
+    public int location_from;
+    public int location_to;
+    
     /* Weights to determine cost. */
     public double basic_cost_weight = 1.0;
     public double cost_per_kg_weight;

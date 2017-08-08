@@ -1,4 +1,4 @@
-package ddg;
+package com.martijncourteaux.supplychainplanner.dummydatagenerator;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

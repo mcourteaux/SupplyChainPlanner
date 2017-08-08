@@ -1,5 +1,6 @@
-package sp;
+package com.martijncourteaux.supplychainplanner.shortestpaths;
 
+import com.martijncourteaux.supplychainplanner.ConsignmentDetails;
 import edu.asu.emit.algorithm.graph.Graph;
 import edu.asu.emit.algorithm.graph.VariableGraph;
 import edu.asu.emit.algorithm.graph.Vertex;
