@@ -38,10 +38,7 @@ public class Main {
 
             System.out.println("Loading graph from database...");
             AttributedGraph<VertexAttribute> g = gi.instantiateGraph(connection, cm);
-
-            System.out.println("Writing graph to file...");
             Graph gr = g.getGraph();
-            gr.exportToFile("test.graph");
 
             Vertex vFrom = g.getVertexForLocation(6);
             Vertex vTo = g.getVertexForLocation(51);
