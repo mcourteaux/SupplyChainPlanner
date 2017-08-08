@@ -5,6 +5,9 @@
  */
 package sp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author martijn
@@ -25,4 +28,7 @@ public class ConsignmentDetails {
     public double weight_kg;
     public double volume_m3;
     public int pallets;
+
+    /* Politics */
+    public List<Integer> disallowed_agents = new ArrayList<>();
 }

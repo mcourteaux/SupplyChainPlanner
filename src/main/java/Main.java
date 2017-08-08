@@ -40,11 +40,18 @@ public class Main {
             cm.cost_per_pallet_weight = 5.0;
             cm.duration_hours_weight = 3.0;
 
+            /* Specify the size of the consignment, such that the offers can be
+             * filtered. */
             cm.pallets = 5;
             cm.volume_m3 = 20;
             cm.weight_kg = 800;
 
+            /* Some parameters for extra filtering. */
             cm.allow_ferry = true;
+
+            /* Some agents that the client had trouble with and doesn't want to
+             * work with again. */
+            cm.disallowed_agents.add(7);
 
             System.out.println("Loading graph from database...");
             AttributedGraph<VertexAttribute> g = gi.instantiateGraph(connection, cm);
@@ -57,13 +64,19 @@ public class Main {
             YenTopKShortestPathsAlg alg = new YenTopKShortestPathsAlg(gr, vFrom, vTo);
 
             int count = 0;
-            while (alg.hasNext() && count++ < 30) {
+            while (alg.hasNext() && count++ < 5) {
                 Path p = alg.next();
                 System.out.printf("Path %03d: %s%n", count, path_to_string(p, g));
             }
         }
     }
 
+    /**
+     * Creates a nicely formatted multiline string for a given Path.
+     * @param p the path to represent.
+     * @param gr the attributed graph which contains the Path.
+     * @return A nice multiline string.
+     */
     public static String path_to_string(Path p, AttributedGraph<VertexAttribute> gr) {
         StringBuilder sb = new StringBuilder();
         sb.append("Path (cost=");
@@ -90,6 +103,11 @@ public class Main {
         return sb.toString();
     }
 
+    /**
+     * Prints some stats of the graph size.
+     * @param conn a valid SQL connection.
+     * @throws SQLException 
+     */
     public static void print_graph_stats(Connection conn) throws SQLException {
         long num_loc;
         long num_lines;

@@ -55,10 +55,14 @@ public class GraphInstantiator {
                 cm.pallets, cm.pallets);
 
         if (!cm.allow_ferry) {
-            conditions += "AND line_modality != 'ferry'";
+            conditions += "AND line_modality != 'ferry' ";
         }
         if (!cm.allow_roads) {
-            conditions += "AND line_modality != 'road'";
+            conditions += "AND line_modality != 'road' ";
+        }
+
+        for (int agent_id : cm.disallowed_agents) {
+            conditions += "AND offer_agent != " + agent_id;
         }
 
         String query
