@@ -3,14 +3,14 @@ package ddg;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Random;
 
 public class OffersGenerator {
+
     public void generate(Connection conn, int numOffers, int numAgents, int numLines)
-        throws SQLException {
-        String query =
-            "INSERT INTO transport_offers (offer_agent, offer_description, offer_line, offer_min_weight, offer_max_weight, offer_min_volume, offer_max_volume, offer_min_pallets, offer_max_pallets, offer_cost_base, offer_cost_per_kg, offer_cost_per_m3, offer_cost_per_pallet, offer_duration_hours, offer_required_categories, offer_rejected_categories) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+            throws SQLException {
+        String query
+                = "INSERT INTO transport_offers (offer_agent, offer_description, offer_line, offer_min_weight, offer_max_weight, offer_min_volume, offer_max_volume, offer_min_pallets, offer_max_pallets, offer_cost_base, offer_cost_per_kg, offer_cost_per_m3, offer_cost_per_pallet, offer_duration_hours, offer_required_categories, offer_rejected_categories) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
         PreparedStatement stat = conn.prepareStatement(query);
 
         Random random = new Random();
@@ -18,7 +18,11 @@ public class OffersGenerator {
         for (int i = 0; i < numOffers; ++i) {
             stat.setInt(1, random.nextInt(numAgents) + 1);
             stat.setString(2, String.format("OFFER_%05d", i + 1));
-            stat.setInt(3, random.nextInt(numLines) + 1);
+            if (i < 2 * numLines) {
+                stat.setInt(3, (i % numLines) + 1);
+            } else {
+                stat.setInt(3, random.nextInt(numLines) + 1);
+            }
 
             // Weight
             if (random.nextBoolean()) {
@@ -74,8 +78,15 @@ public class OffersGenerator {
             stat.setNull(15, java.sql.Types.VARCHAR);
             stat.setNull(16, java.sql.Types.VARCHAR);
 
-            stat.executeUpdate();
-            System.out.println("Inserted offer " + i);
+            stat.addBatch();
+            if (i % 100 == 0) {
+                stat.executeBatch();
+                System.out.println("Inserted offers " + i);
+                stat.clearBatch();
+            }
         }
+        stat.executeBatch();
+        stat.clearBatch();
+        System.out.println("Done");
     }
 }

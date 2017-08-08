@@ -15,6 +15,21 @@ public class GraphInstantiator {
     public GraphInstantiator() {
     }
 
+    private Vertex createVertex(AttributedGraph<VertexAttribute> gr, int loc) {
+        Graph g = gr.getGraph();
+        Vertex v = new Vertex();
+        g.addVertex(v);
+        gr.setVertexForLocation(loc, v);
+
+        VertexAttribute att = new VertexAttribute();
+        att.is_location_vertex = true;
+        att.location_code = String.format("LOC_%05d", loc);
+        att.location_id = loc;
+        gr.setAttribute(v.getId(), att);
+
+        return v;
+    }
+
     public AttributedGraph instantiateGraph(Connection conn, CostModel cm) throws SQLException {
         String cost_formula = String.format(
                 "%f * offer_cost_base + "
@@ -28,7 +43,7 @@ public class GraphInstantiator {
 
         String query
                 = "SELECT (" + cost_formula + ") AS cost, "
-                + "offer_duration_hours, offer_agent, line_from, line_to "
+                + "offer_duration_hours, offer_agent, line_from, line_to, line_code "
                 + "FROM transport_offers "
                 + "INNER JOIN transport_lines ON (line_id = offer_line)";
 
@@ -40,6 +55,8 @@ public class GraphInstantiator {
             int col_agent = rs.findColumn("offer_agent");
             int col_from = rs.findColumn("line_from");
             int col_to = rs.findColumn("line_to");
+            int col_line_code = rs.findColumn("line_code");
+
             Map<Integer, Vertex> vertices = new HashMap<>();
             Graph g = new VariableGraph();
             attribs = new AttributedGraph<>(g);
@@ -47,33 +64,30 @@ public class GraphInstantiator {
                 double cost = rs.getDouble(col_cost);
                 int from = rs.getInt(col_from);
                 int to = rs.getInt(col_to);
-                
+
                 Vertex vFrom = vertices.get(from);
                 Vertex vTo = vertices.get(to);
-                
+
                 if (vFrom == null) {
-                    vFrom = new Vertex();
-                    g.addVertex(vFrom);
+                    vFrom = createVertex(attribs, from);
                     vertices.put(from, vFrom);
-                    attribs.setVertexForLocation(from, vFrom);
                 }
                 if (vTo == null) {
-                    vTo = new Vertex();
-                    g.addVertex(vTo);
+                    vTo = createVertex(attribs, to);
                     vertices.put(from, vTo);
-                    attribs.setVertexForLocation(to, vTo);
                 }
-                
+
                 Vertex vAux = new Vertex();
                 g.addVertex(vAux);
-                
-                
+
                 g.addEdge(vFrom.getId(), vAux.getId(), 0.0);
                 g.addEdge(vAux.getId(), vTo.getId(), cost);
-                
+
                 VertexAttribute att = new VertexAttribute();
+                att.cost = cost;
                 att.is_auxiliary_offer_out_vertex = true;
                 att.agent_id = rs.getInt(col_agent);
+                att.line_code = rs.getString(col_line_code);
                 att.line_from = from;
                 att.line_to = to;
                 att.duration = rs.getInt(col_duration);
