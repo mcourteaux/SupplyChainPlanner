@@ -9,12 +9,11 @@ import ddg.LocationGenerator;
 import ddg.OffersGenerator;
 import edu.asu.emit.algorithm.graph.Graph;
 import edu.asu.emit.algorithm.graph.Path;
-import edu.asu.emit.algorithm.graph.Vertex;
 import edu.asu.emit.algorithm.graph.abstraction.BaseVertex;
 import edu.asu.emit.algorithm.graph.shortestpaths.YenTopKShortestPathsAlg;
 import java.sql.ResultSet;
 import sp.AttributedGraph;
-import sp.CostModel;
+import sp.ConsignmentDetails;
 import sp.GraphInstantiator;
 
 import sp.VertexAttribute;
@@ -34,18 +33,25 @@ public class Main {
             print_graph_stats(connection);
 
             GraphInstantiator gi = new GraphInstantiator();
-            CostModel cm = new CostModel();
+            ConsignmentDetails cm = new ConsignmentDetails();
             cm.basic_cost_weight = 1.0;
-            cm.cost_per_kg_weight = 140.0;
+            cm.cost_per_kg_weight = 800.0;
             cm.cost_per_m3_weight = 20.0;
+            cm.cost_per_pallet_weight = 5.0;
             cm.duration_hours_weight = 3.0;
+
+            cm.pallets = 5;
+            cm.volume_m3 = 20;
+            cm.weight_kg = 800;
+
+            cm.allow_ferry = true;
 
             System.out.println("Loading graph from database...");
             AttributedGraph<VertexAttribute> g = gi.instantiateGraph(connection, cm);
             Graph gr = g.getGraph();
 
-            BaseVertex vFrom = g.getVertexForLocation(6);
-            BaseVertex vTo = g.getVertexForLocation(26);
+            BaseVertex vFrom = g.getVertexForLocation(1);
+            BaseVertex vTo = g.getVertexForLocation(55);
 
             System.out.println("Searching shortest paths...");
             YenTopKShortestPathsAlg alg = new YenTopKShortestPathsAlg(gr, vFrom, vTo);
@@ -72,10 +78,13 @@ public class Main {
                 sb.append(att.location_code);
                 sb.append("\n");
             } else {
-                sb.append(" ---{");
+                sb.append(" --- ");
+                sb.append(att.line_modality);
+                sb.append("   ", 0, 6 - att.line_modality.length());
+                sb.append(" { ");
                 sb.append(String.format("%8s: agent=%2d, cost=%5.2f",
                         att.line_code, att.agent_id, att.cost));
-                sb.append("}---> ");
+                sb.append("  }---> ");
             }
         }
         return sb.toString();

@@ -9,9 +9,20 @@ package sp;
  *
  * @author martijn
  */
-public class CostModel {
+public class ConsignmentDetails {
+    /* Weights to determine cost. */
     public double basic_cost_weight = 1.0;
     public double cost_per_kg_weight;
     public double cost_per_m3_weight;
+    public double cost_per_pallet_weight;
     public double duration_hours_weight;
+
+    /* Restrictions on transport. */
+    public boolean allow_ferry = true;
+    public boolean allow_roads = true;
+
+    /* Actual consignment details. */
+    public double weight_kg;
+    public double volume_m3;
+    public int pallets;
 }

@@ -19,6 +19,7 @@ public class VertexAttribute {
     public int line_from;
     public int line_to;
     public int duration;
+    public String line_modality;
 
     public boolean is_location_vertex;
     public int location_id;

@@ -30,22 +30,44 @@ public class GraphInstantiator {
         return v;
     }
 
-    public AttributedGraph instantiateGraph(Connection conn, CostModel cm) throws SQLException {
+    public AttributedGraph instantiateGraph(Connection conn, ConsignmentDetails cm) throws SQLException {
         String cost_formula = String.format(
                 "%f * offer_cost_base + "
                 + "%f * offer_cost_per_kg + "
                 + "%f * offer_cost_per_m3 + "
+                + "%f * offer_cost_per_pallet + "
                 + "%f * offer_duration_hours",
                 cm.basic_cost_weight,
                 cm.cost_per_kg_weight,
                 cm.cost_per_m3_weight,
+                cm.cost_per_pallet_weight,
                 cm.duration_hours_weight);
+
+        String conditions = String.format(
+                "offer_min_weight <= %f AND"
+                + " (offer_max_weight IS NULL OR %f <= offer_max_weight) AND "
+                + "offer_min_volume <= %f AND"
+                + " (offer_max_volume IS NULL OR %f <= offer_max_volume) AND "
+                + "offer_min_pallets <= %d AND"
+                + " (offer_max_pallets IS NULL OR %d <= offer_max_pallets) ",
+                cm.weight_kg, cm.weight_kg,
+                cm.volume_m3, cm.volume_m3,
+                cm.pallets, cm.pallets);
+
+        if (!cm.allow_ferry) {
+            conditions += "AND line_modality != 'ferry'";
+        }
+        if (!cm.allow_roads) {
+            conditions += "AND line_modality != 'road'";
+        }
 
         String query
                 = "SELECT (" + cost_formula + ") AS cost, "
-                + "offer_duration_hours, offer_agent, line_from, line_to, line_code "
+                + "offer_duration_hours, offer_agent, "
+                + "line_from, line_to, line_code, line_modality "
                 + "FROM transport_offers "
-                + "INNER JOIN transport_lines ON (line_id = offer_line)";
+                + "INNER JOIN transport_lines ON (line_id = offer_line) "
+                + "WHERE " + conditions;
 
         Statement s = conn.createStatement();
         AttributedGraph<VertexAttribute> attribs;
@@ -56,6 +78,7 @@ public class GraphInstantiator {
             int col_from = rs.findColumn("line_from");
             int col_to = rs.findColumn("line_to");
             int col_line_code = rs.findColumn("line_code");
+            int col_line_modality = rs.findColumn("line_modality");
 
             Map<Integer, Vertex> vertices = new HashMap<>();
             Graph g = new VariableGraph();
@@ -90,6 +113,7 @@ public class GraphInstantiator {
                 att.line_code = rs.getString(col_line_code);
                 att.line_from = from;
                 att.line_to = to;
+                att.line_modality = rs.getString(col_line_modality);
                 att.duration = rs.getInt(col_duration);
                 attribs.setAttribute(vAux.getId(), att);
             }
