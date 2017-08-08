@@ -1,0 +1,10 @@
+<#if licenseFirst??>
+${licenseFirst}
+</#if>
+${licensePrefix}Copyright (C) ${date?date?string("yyyy")} ${project.organization!user}.
+${licensePrefix?replace(" +$", "", "r")}
+${licensePrefix}For license details, see LICENSE.txt and README.txt.
+${licensePrefix}This project is licensed under Creative Commons NC-NC-ND.
+<#if licenseLast??>
+${licenseLast}
+</#if>

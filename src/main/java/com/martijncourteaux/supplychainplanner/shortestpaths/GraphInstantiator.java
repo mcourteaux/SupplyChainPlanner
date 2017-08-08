@@ -1,3 +1,9 @@
+/* 
+ * Copyright (C) 2017 Martijn Courteaux.
+ *
+ * For license details, see LICENSE.txt and README.txt.
+ * This project is licensed under Creative Commons NC-NC-ND.
+ */
 package com.martijncourteaux.supplychainplanner.shortestpaths;
 
 import com.martijncourteaux.supplychainplanner.ConsignmentDetails;

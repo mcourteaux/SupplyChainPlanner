@@ -1,7 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/* 
+ * Copyright (C) 2017 Martijn Courteaux.
+ *
+ * For license details, see LICENSE.txt and README.txt.
+ * This project is licensed under Creative Commons NC-NC-ND.
  */
 package com.martijncourteaux.supplychainplanner.shortestpaths;
 
