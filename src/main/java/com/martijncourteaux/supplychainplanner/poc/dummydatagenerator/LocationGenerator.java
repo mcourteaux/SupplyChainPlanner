@@ -4,7 +4,7 @@
  * For license details, see LICENSE.txt and README.txt.
  * This project is licensed under Creative Commons NC-NC-ND.
  */
-package com.martijncourteaux.supplychainplanner.dummydatagenerator;
+package com.martijncourteaux.supplychainplanner.poc.dummydatagenerator;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

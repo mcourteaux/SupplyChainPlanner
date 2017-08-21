@@ -4,7 +4,7 @@
  * For license details, see LICENSE.txt and README.txt.
  * This project is licensed under Creative Commons NC-NC-ND.
  */
-package com.martijncourteaux.supplychainplanner.shortestpaths;
+package com.martijncourteaux.supplychainplanner.poc.shortestpaths;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

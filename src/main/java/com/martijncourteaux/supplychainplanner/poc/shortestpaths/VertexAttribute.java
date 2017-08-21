@@ -4,7 +4,7 @@
  * For license details, see LICENSE.txt and README.txt.
  * This project is licensed under Creative Commons NC-NC-ND.
  */
-package com.martijncourteaux.supplychainplanner.shortestpaths;
+package com.martijncourteaux.supplychainplanner.poc.shortestpaths;
 
 /**
  *
@@ -12,8 +12,10 @@ package com.martijncourteaux.supplychainplanner.shortestpaths;
  */
 public class VertexAttribute {
 
-    public boolean is_auxiliary_offer_out_vertex;
     public double cost;
+
+    public boolean is_auxiliary_offer_out_vertex;
+    public double weight;
     public int offer_id;
     public int agent_id;
     public String line_code;

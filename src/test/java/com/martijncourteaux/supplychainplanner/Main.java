@@ -5,12 +5,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.martijncourteaux.supplychainplanner.dummydatagenerator.LineGenerator;
-import com.martijncourteaux.supplychainplanner.dummydatagenerator.LocationGenerator;
-import com.martijncourteaux.supplychainplanner.dummydatagenerator.OffersGenerator;
+import com.martijncourteaux.supplychainplanner.poc.dummydatagenerator.LineGenerator;
+import com.martijncourteaux.supplychainplanner.poc.dummydatagenerator.LocationGenerator;
+import com.martijncourteaux.supplychainplanner.poc.dummydatagenerator.OffersGenerator;
 import java.sql.ResultSet;
-import com.martijncourteaux.supplychainplanner.shortestpaths.ShortestPathsSolver;
-import com.martijncourteaux.supplychainplanner.shortestpaths.TransportPath;
+import com.martijncourteaux.supplychainplanner.poc.shortestpaths.ShortestPathsSolver;
+import com.martijncourteaux.supplychainplanner.poc.shortestpaths.TransportPath;
 
 public class Main {
 
@@ -39,10 +39,10 @@ public class Main {
 
             /* Cost weights */
             cm.basic_cost_weight = 1.0;
-            cm.cost_per_kg_weight = cm.weight_kg;
-            cm.cost_per_m3_weight = cm.volume_m3;
-            cm.cost_per_pallet_weight = cm.pallets;
-            cm.duration_hours_weight = 3.0;
+            cm.cost_per_kg_weight = 1.0;
+            cm.cost_per_m3_weight = 1.0;
+            cm.cost_per_pallet_weight = 1.0;
+            cm.duration_hours_weight = 300.0;
 
             /* Some parameters for extra filtering. */
             cm.allow_ferry = true;
@@ -50,6 +50,9 @@ public class Main {
             /* Some agents that the client had trouble with and doesn't want to
              * work with again. */
             cm.disallowed_agents.add(7);
+
+            /* Print it */
+            System.out.println(cm);
 
             /* ==== Solve it ==== */
             ShortestPathsSolver sps = new ShortestPathsSolver(cm);
@@ -59,6 +62,7 @@ public class Main {
             int found = sps.searchPaths(5);
 
             System.out.println("Found " + found + " paths.");
+            System.out.println();
 
             for (TransportPath tp : sps.getTopKShortestPaths()) {
                 System.out.println(tp);

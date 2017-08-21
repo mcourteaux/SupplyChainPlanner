@@ -4,7 +4,7 @@
  * For license details, see LICENSE.txt and README.txt.
  * This project is licensed under Creative Commons NC-NC-ND.
  */
-package com.martijncourteaux.supplychainplanner.shortestpaths;
+package com.martijncourteaux.supplychainplanner.poc.shortestpaths;
 
 import edu.asu.emit.algorithm.graph.Path;
 import edu.asu.emit.algorithm.graph.abstraction.BaseVertex;
@@ -31,6 +31,30 @@ public class TransportPath {
         return path;
     }
 
+    public double weight() {
+        return path.getWeight();
+    }
+
+    public double cost() {
+        double cost = 0.0;
+        for (int i = 0; i < path.getVertexList().size(); ++i) {
+            BaseVertex vert = path.getVertexList().get(i);
+            VertexAttribute att = graph.getAttribute(vert.getId());
+            cost += att.cost;
+        }
+        return cost;
+    }
+
+    public int duration_hours() {
+        int hours = 0;
+        for (int i = 0; i < path.getVertexList().size(); ++i) {
+            BaseVertex vert = path.getVertexList().get(i);
+            VertexAttribute att = graph.getAttribute(vert.getId());
+            hours += att.duration;
+        }
+        return hours;
+    }
+
     /**
      * Creates a nicely formatted multi-line string for this Path.
      *
@@ -39,10 +63,14 @@ public class TransportPath {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Path (cost=");
-        sb.append(path.getWeight());
-        sb.append("; hops=");
+        sb.append("Path (weight=");
+        sb.append(weight());
+        sb.append("; cost=");
+        sb.append(String.format("%.2f", cost()));
+        sb.append(" EUR; hops=");
         sb.append((path.getVertexList().size() - 1) / 2);
+        sb.append("; hours=");
+        sb.append(duration_hours());
         sb.append(")\n");
         for (int i = 0; i < path.getVertexList().size(); ++i) {
             BaseVertex vert = path.getVertexList().get(i);
@@ -55,8 +83,13 @@ public class TransportPath {
                 sb.append(att.line_modality);
                 sb.append("   ", 0, 6 - att.line_modality.length());
                 sb.append("]-{ ");
-                sb.append(String.format("%8s: agent=%2d, cost=%5.2f",
-                        att.line_code, att.agent_id, att.cost));
+                sb.append(String.format("%8s: "
+                        + "agent=%2d, "
+                        + "cost=%7.2f EUR, "
+                        + "weight=%7.3f, "
+                        + "duration=%2dh",
+                        att.line_code, att.agent_id, att.cost,
+                        att.weight, att.duration));
                 sb.append("  }---> ");
             }
         }
