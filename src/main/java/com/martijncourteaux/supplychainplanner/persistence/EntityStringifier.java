@@ -9,11 +9,20 @@ package com.martijncourteaux.supplychainplanner.persistence;
 import java.lang.reflect.Field;
 
 /**
- *
+ * A string producer for objects annotated with <code>@Entity</code>.
+ * 
  * @author martijn
  */
 public class EntityStringifier {
 
+    /**
+     * Produces a nice string from the <code>@Entity</code> annotated object,
+     * using the <code>@Column</code> annotated fields.
+     * 
+     * @param o The object for which to produce a string.
+     * 
+     * @return The string representation.
+     */
     public static String entityToString(Object o) {
         StringBuilder sb = new StringBuilder();
         sb.append(o.getClass().getSimpleName());

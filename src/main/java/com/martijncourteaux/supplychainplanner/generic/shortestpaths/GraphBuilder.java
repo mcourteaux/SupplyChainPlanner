@@ -18,17 +18,33 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
+ * This class builds a <code>TransportGraph</code>, given a list of transport
+ * options, a source and destination.
+ * 
  * @author martijn
- * @param <AContext>
- * @param <ALoc>
- * @param <ATransport>
+ * @param <AContext> The context of your application.
+ * @param <ALoc> The location model used for both transport options and shipment
+ *               locations within your application.
+ * @param <ATransport> The transport option model within your application.
  */
 public class GraphBuilder<AContext extends AbstractContext, ALoc extends AbstractLocation, ATransport extends AbstractTransport<? extends ALoc>> {
 
+    /**
+     * Default constructor.
+     */
     public GraphBuilder() {
     }
 
+    /**
+     * Builds the transport graph.
+     * 
+     * @param ctx The context of your application will be passed in.
+     * @param transports The list of available transport options.
+     * @param source The source location of the shipment.
+     * @param sink The destination location of the shipment.
+     * 
+     * @return A TransportGraph representing the network.
+     */
     public TransportGraph buildGraph(AContext ctx, List<ATransport> transports, ALoc source, ALoc sink) {
 
         Graph g = new VariableGraph();

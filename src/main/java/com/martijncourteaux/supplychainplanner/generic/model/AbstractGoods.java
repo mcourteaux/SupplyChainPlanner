@@ -7,9 +7,18 @@
 package com.martijncourteaux.supplychainplanner.generic.model;
 
 /**
- *
+ * A class completely up to the user to model the goods of a transport.
+ * 
+ * Typically this will contain fields like
+ * <ul>
+ *  <li>weight</li>
+ *  <li>volume</li>
+ *  <li>is dangerous</li>
+ *  <li>is food</li>
+ *  <li>...</li>
+ * </ul>
+ * 
  * @author martijn
  */
-public class AbstractGoods {
-    
+public abstract class AbstractGoods {
 }

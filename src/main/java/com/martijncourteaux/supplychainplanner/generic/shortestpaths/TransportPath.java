@@ -12,31 +12,47 @@ import edu.asu.emit.algorithm.graph.Path;
 import edu.asu.emit.algorithm.graph.abstraction.BaseVertex;
 
 /**
- *
+ * A path through a transport graph.
  * @author martijn
+ * @param <ALoc> The location model within your application.
+ * @param <ATransport> The transport option model within your application.
  */
 public class TransportPath<ALoc extends AbstractLocation, ATransport extends AbstractTransport<ALoc>> {
 
     private final Path path;
     private final TransportGraph<ALoc, ATransport> graph;
 
+    /**
+     * Default constructor.
+     * @param path The path object.
+     * @param graph The graph object.
+     */
     public TransportPath(Path path, TransportGraph<ALoc, ATransport> graph) {
         this.path = path;
         this.graph = graph;
     }
 
+    /**
+     * @return The graph associated with this path.
+     */
     public TransportGraph getGraph() {
         return graph;
     }
 
+    /**
+     * @return The Path object representing the path through the graph object.
+     */
     public Path getPath() {
         return path;
     }
 
+    /**
+     * Nicely constructs a string representation of the path, using the
+     * <code>Transport::toSingleLineString()</code> method.
+     * @return A nice string representation.
+     */
     @Override
     public String toString() {
-        //return "TransportPath with cost: " + path.getWeight() +" number of hops: " + path.getVertexList().size();
-
         StringBuilder sb = new StringBuilder();
         
         sb.append("TransportPath from '");

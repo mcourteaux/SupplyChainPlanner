@@ -11,7 +11,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- *
+ * An annotation required to be used on classes which want to support automatic
+ * data fetching from SQL ResultSets using the <code>@Column</code> annotation.
+ * 
  * @author martijn
  */
 @Retention(RetentionPolicy.RUNTIME)

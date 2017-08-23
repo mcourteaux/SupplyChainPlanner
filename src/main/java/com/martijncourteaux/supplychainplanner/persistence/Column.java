@@ -12,7 +12,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- *
+ * Column annotation, used for automatic fetching from a SQL ResultSet.
+ * Allows to specify a <code>column</code> string if the column name in the
+ * ResultSet differs from the Java field name.
+ * 
  * @author martijn
  */
 @Target(ElementType.FIELD)
