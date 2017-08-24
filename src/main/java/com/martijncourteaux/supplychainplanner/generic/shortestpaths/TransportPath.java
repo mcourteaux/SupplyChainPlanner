@@ -56,12 +56,12 @@ public class TransportPath<ALoc extends AbstractLocation, ATransport extends Abs
         StringBuilder sb = new StringBuilder();
         
         sb.append("TransportPath from '");
-        sb.append(graph.getSource());
+        sb.append(graph.getSourceLocation());
         sb.append("' to '");
-        sb.append(graph.getSink());
+        sb.append(graph.getSinkLocation());
         sb.append("' with weight: ");
-        sb.append(path.getWeight());
-        sb.append("{\n");
+        sb.append(String.format("%5.2f", path.getWeight()));
+        sb.append(" {\n");
 
         /* Path order is:
          *  source ->
@@ -71,10 +71,8 @@ public class TransportPath<ALoc extends AbstractLocation, ATransport extends Abs
          *  from_region --{transport}--> to_region --{xdock-cost}--->
          *  sink
          */
-        sb.append("Source: ");
-        sb.append(graph.getSourceLocation());
-        sb.append('\n');
         int transports = (path.getVertexList().size() - 2) / 2;
+        double total_cost = 0.0;
         for (int i = 0; i < transports; ++i) {
             sb.append("  ");
             BaseVertex location_from = path.getVertexList().get(i * 2 + 1);
@@ -85,10 +83,10 @@ public class TransportPath<ALoc extends AbstractLocation, ATransport extends Abs
             sb.append(String.format(" [%05d] ", location_till.getId()));
             //sb.append(" --{ 0.0: Xdock }-->");
             sb.append('\n');
+            total_cost += transport.cost();
         }
-        sb.append("Sink: ");
-        sb.append(graph.getSinkLocation());
-        sb.append('}');
+        sb.append("} with cost: ");
+        sb.append(String.format("%5.2f EUR", total_cost));
 
         return sb.toString();
     }
