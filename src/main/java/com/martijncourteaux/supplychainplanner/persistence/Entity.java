@@ -19,5 +19,5 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Entity {
-    
+    String prefix() default "";
 }

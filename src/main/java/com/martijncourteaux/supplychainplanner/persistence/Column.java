@@ -22,4 +22,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Column {
     String column() default "";
+    String exact_column() default "";
 }
