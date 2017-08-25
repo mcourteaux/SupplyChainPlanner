@@ -13,6 +13,7 @@ import edu.asu.emit.algorithm.graph.abstraction.BaseVertex;
 
 /**
  * A path through a transport graph.
+ *
  * @author martijn
  * @param <ALoc> The location model within your application.
  * @param <ATransport> The transport option model within your application.
@@ -24,6 +25,7 @@ public class TransportPath<ALoc extends AbstractLocation, ATransport extends Abs
 
     /**
      * Default constructor.
+     *
      * @param path The path object.
      * @param graph The graph object.
      */
@@ -47,14 +49,33 @@ public class TransportPath<ALoc extends AbstractLocation, ATransport extends Abs
     }
 
     /**
+     * @return The number of transport legs.
+     */
+    public int numberOfTransports() {
+        return (path.getVertexList().size() - 2) / 2;
+    }
+
+    /**
+     * Get the n-th transport path.
+     * @param index n
+     * @return The transport leg with index n.
+     */
+    public ATransport getTransportLeg(int index) {
+        BaseVertex location_from = path.getVertexList().get(index * 2 + 1);
+        ATransport transport = graph.getTransport(location_from.getId());
+        return transport;
+    }
+
+    /**
      * Nicely constructs a string representation of the path, using the
      * <code>Transport::toSingleLineString()</code> method.
+     *
      * @return A nice string representation.
      */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        
+
         sb.append("TransportPath from '");
         sb.append(graph.getSourceLocation());
         sb.append("' to '");
